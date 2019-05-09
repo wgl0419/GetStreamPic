@@ -48,19 +48,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPreview = (SurfaceView) findViewById(R.id.surface_view);
+        mPreview = findViewById(R.id.surface_view);
         screenHeight = 480;
         screenWidth = 640;
         mHolder = mPreview.getHolder();
         mHolder.addCallback(this);
-
-        findViewById(R.id.btn_main_to_createFile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CreateFileActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
