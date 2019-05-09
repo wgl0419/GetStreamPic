@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     //新添加的保存到手机的方法
     @SuppressLint("SdCardPath")
     private void saveBitmap(Bitmap bitmap, String bitName) throws IOException {
-
         File appDir = new File(Environment.getExternalStorageDirectory(), "Images");
         if (!appDir.exists()) {
             appDir.mkdir();
