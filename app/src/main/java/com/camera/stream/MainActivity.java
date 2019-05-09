@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @SuppressLint("SdCardPath")
     private void saveBitmap(Bitmap bitmap, String bitName) throws IOException {
 
-        File appDir = new File(Environment.getExternalStorageDirectory(), "CoolTone");
+        File appDir = new File(Environment.getExternalStorageDirectory(), "Images");
         if (!appDir.exists()) {
             appDir.mkdir();
         }
