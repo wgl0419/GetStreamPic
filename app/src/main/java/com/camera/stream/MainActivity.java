@@ -8,10 +8,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +39,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     Camera mcamera;
     int screenWidth, screenHeight;
     boolean isPreview = false; // 是否在浏览中
-//    private String ipname;
     int pic_name = 1;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +65,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     protected void onResume() {
         super.onResume();
-//        if (mcamera == null) {
-//            mcamera = getMcamera();
-//
-//            if (mHolder != null) {
-//                setStartPreview(mcamera, mHolder);
-//            }
-//        }
         takePhone();
     }
 
@@ -135,12 +134,14 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
                 if (image != null) {
 
-                    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+                    ByteArrayOutputStream outstream = new ByteArrayOutputStream(data.length);
                     image.compressToJpeg(new Rect(0, 0, size.width, size.height), 80, outstream);
 
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    image.compressToJpeg(new Rect(0, 0, size.width, size.height), 80, stream);
-                    Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
+                    byte[] tmp = outstream.toByteArray();
+
+//                    Bitmap bmp = BitmapFactory.decodeByteArray(outstream.toByteArray(), 0, outstream.size());
+
+                    Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0, tmp.length);
                     String picture_name = pic_name + ".jpg";
                     System.out.println(picture_name);
 
@@ -159,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     //新添加的保存到手机的方法
     @SuppressLint("SdCardPath")
     private void saveBitmap(Bitmap bitmap, String bitName) throws IOException {
-         File file = new File("/sdcard/DCIM/Images/" + bitName);
+//        File file = new File("/sdcard/DCIM/Images/" + bitName);
+
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "Images/" + bitName);
 
         if(!file.exists()) {
             file.mkdirs();//多级目录
@@ -168,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         FileOutputStream out;
         try {
             out = new FileOutputStream(file);
-            if (bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)) {
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
                 out.flush();
                 out.close();
             }
@@ -203,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             mcamera = null;
         }
     }
-
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
