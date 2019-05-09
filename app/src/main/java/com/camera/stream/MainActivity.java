@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
 
     public void takePhone() {
-
         // check Android 6 permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
