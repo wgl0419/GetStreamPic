@@ -21,6 +21,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -135,12 +136,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 if (image != null) {
 
                     ByteArrayOutputStream outstream = new ByteArrayOutputStream(data.length);
-                    image.compressToJpeg(new Rect(0, 0, size.width, size.height), 80, outstream);
+                    image.compressToJpeg(new Rect(0, 0, size.width, size.height), 100, outstream);
 
                     byte[] tmp = outstream.toByteArray();
-
-//                    Bitmap bmp = BitmapFactory.decodeByteArray(outstream.toByteArray(), 0, outstream.size());
-
                     Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0, tmp.length);
                     String picture_name = pic_name + ".jpg";
                     System.out.println(picture_name);
@@ -160,21 +158,17 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     //新添加的保存到手机的方法
     @SuppressLint("SdCardPath")
     private void saveBitmap(Bitmap bitmap, String bitName) throws IOException {
-//        File file = new File("/sdcard/DCIM/Images/" + bitName);
 
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "Images/" + bitName);
-
-        if(!file.exists()) {
-            file.mkdirs();//多级目录
+        File appDir = new File(Environment.getExternalStorageDirectory(), "CoolTone");
+        if (!appDir.exists()) {
+            appDir.mkdir();
         }
-
-        FileOutputStream out;
-        try {
-            out = new FileOutputStream(file);
-            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
-                out.flush();
-                out.close();
-            }
+        File file = new File(appDir, bitName);     // 创建文件
+        try {                                       // 写入图片
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
